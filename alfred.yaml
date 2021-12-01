@@ -1,0 +1,34 @@
+version: '3.4'
+
+x-alfred-steps:
+  - name: Docker build and push to AWS ECR
+    image: wuakitv/alfred-ecr
+    when:
+      branch:
+        - master
+    settings:
+      aws_access_key_id:
+        from_consul: bot-amazon-kinesis-agent-ecr/aws_access_key_id
+      aws_secret_access_key:
+        from_consul_secret: bot-amazon-kinesis-agent-ecr/aws_secret_access_key
+      ecr_uri: 585257864808.dkr.ecr.eu-west-1.amazonaws.com
+      repo: wuakitv/amazon-kinesis-agent
+      tags:
+        - prod-${GIT_COMMIT}
+        - ${GIT_TAG}
+        - latest
+
+  - name: Docker build and push to AWS ECR
+    image: wuakitv/alfred-ecr
+    when:
+      branch:
+        - ^((?!master).)*$
+    settings:
+      aws_access_key_id:
+        from_consul: bot-amazon-kinesis-agent-ecr/aws_access_key_id
+      aws_secret_access_key:
+        from_consul_secret: bot-amazon-kinesis-agent-ecr/aws_secret_access_key
+      ecr_uri: 585257864808.dkr.ecr.eu-west-1.amazonaws.com
+      repo: wuakitv/amazon-kinesis-agent
+      tags:
+        - dev-${GIT_COMMIT}
